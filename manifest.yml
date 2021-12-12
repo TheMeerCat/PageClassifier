@@ -1,0 +1,85 @@
+modules:
+  confluence:spacePage:
+    - key: page-classifier-space-overview
+      resource: spaceOverview
+      resolver:
+        function: spaceOverviewResolver
+      title: Page Classifier
+      route: space
+  confluence:contentBylineItem:
+    - key: page-classifier-page-overview-content-byline-item
+      resource: pageByline
+      resolver:
+        function: labelBylineResolver
+      viewportSize: large
+      title: Page Classifier
+  confluence:contentAction:
+    - key: page-classifier-similar-pages-dialog
+      resource: similarPages
+      resolver:
+        function: similarPagesResolver
+      viewportSize: large
+      title: Page Classifier
+  trigger:
+    - key: trigger-page-indexing
+      function: pageIndexingResolver
+      events:
+        - avi:confluence:created:page
+        - avi:confluence:updated:page
+  webtrigger:
+    - key: webtrigger-page-attachment-indexing
+      function: attmentLabelsResolver
+    - key: webtrigger-page-content-indexing
+      function: contentLabelsResolver
+    - key: webtrigger-post-page-labels
+      function: postLabelsResolver
+    - key: webtrigger-post-page-properties
+      function: postPropertiesResolver
+  function:
+    - key: spaceOverviewResolver
+      handler: index.handler
+    - key: labelBylineResolver
+      handler: index.handler
+    - key: similarPagesResolver
+      handler: index.handler
+    - key: pageIndexingResolver
+      handler: index.updatePageLabels
+    - key: attmentLabelsResolver
+      handler: index.analyzeAttachment
+    - key: contentLabelsResolver
+      handler: index.analyzeContent
+    - key: postLabelsResolver
+      handler: index.postLabels
+    - key: postPropertiesResolver
+      handler: index.postProperties
+resources:
+  - key: pageByline
+    path: build/byline
+  - key: similarPages
+    path: build/similarPages
+  - key: spaceOverview
+    path: build/spaceOverview
+app:
+  id: ari:cloud:ecosystem::app/35c4adac-e2e7-46c5-920d-052e90c0f0f2
+permissions:
+  scopes:
+    - 'storage:app'
+    - 'read:confluence-content.all'
+    - 'read:confluence-content.summary'
+    - 'read:confluence-props'
+    - 'search:confluence'
+    - 'write:confluence-content'
+    - 'write:confluence-props'
+  external:
+    fetch:
+      client:
+        - '*'
+      backend:
+        - '*'
+    images:
+      - '*'
+    media:
+      - '*'
+  content:
+    styles:
+      - 'unsafe-inline'
